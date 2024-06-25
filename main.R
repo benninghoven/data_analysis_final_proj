@@ -3,28 +3,19 @@ library(tidyverse)
 # Load the dataset, assuming the file is named 'fitness_data.csv'
 data <- read.csv("data.csv", na.strings = "")
 
-# Remove columns that contain only NA values
 data_clean <- data %>%
-  select(where(~!all(is.na(.))))
+  select(where(~!all(is.na(.)))) %>%
+  select(Sex, Age, Ht, Wt, HR.rest)
 
-
-# i only want variables Sex, Age, Ht, Wt
-
+# a.
 data_clean <- data_clean %>%
-  select(Sex, Age, Ht, Wt, DBP)
+    mutate(bmi = Wt / Ht^2,
+           heightweight = Ht / Wt,
+           rest_weight = Wt / HR.rest)
 
-
-data_clean <- data_clean %>%
-  mutate(BMI = Wt / (Ht/100)^2)
-
-# split half data at random into two groups - training_data and testing_data
-
-set.seed(123)
+# b.
+set.seed(1234)
 training_data <- data_clean %>%
   sample_frac(0.5)
 testing_data <- data_clean %>%
   anti_join(training_data)
-
-head(training_data)
-
-head(testing_data)
